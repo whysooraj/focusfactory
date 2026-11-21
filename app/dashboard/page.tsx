@@ -55,21 +55,23 @@ export default function Dashboard() {
         const supabase = createClient()
         
         // Fetch user's focus sessions
-        const { data: sessions } = await supabase
-          .from('focus_sessions')
+        const { data: rawSessions } = await (supabase
+          .from('focus_sessions') as any)
           .select('*')
           .eq('user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(5)
 
+        const sessions: any[] = (rawSessions || []) as any[]
+
         // Calculate weekly hours
         const startOfWeek = getStartOfWeek(new Date())
-        const weeklySessions = sessions?.filter(session => {
+        const weeklySessions = sessions.filter((session: any) => {
           const sessionDate = new Date(session.created_at)
           return sessionDate >= startOfWeek
-        }) || []
+        })
         
-        const weeklyHours = weeklySessions.reduce((total, session) => {
+        const weeklyHours = weeklySessions.reduce((total: number, session: any) => {
           return total + (parseInt(session.time) || 0)
         }, 0) / 60 // Convert minutes to hours
 
@@ -79,12 +81,12 @@ export default function Dashboard() {
           date.setDate(date.getDate() - (6 - i))
           const dateStr = date.toISOString().split('T')[0]
           
-          const daySessions = sessions?.filter(session => {
+          const daySessions = sessions.filter((session: any) => {
             const sessionDate = new Date(session.created_at).toISOString().split('T')[0]
             return sessionDate === dateStr
-          }) || []
+          })
           
-          const dayHours = daySessions.reduce((total, session) => {
+          const dayHours = daySessions.reduce((total: number, session: any) => {
             return total + (parseInt(session.time) || 0)
           }, 0) / 60 // Convert minutes to hours
           
@@ -96,12 +98,14 @@ export default function Dashboard() {
         })
 
         // Fetch user's reflections
-        const { data: userReflections } = await supabase
-          .from('reflections')
+        const { data: rawReflections } = await (supabase
+          .from('reflections') as any)
           .select('*')
           .eq('user_id', user.id)
           .order('date', { ascending: false })
           .limit(5)
+
+        const userReflections: any[] = (rawReflections || []) as any[]
 
         // Calculate current streak from reflections
         let currentStreak = 0
@@ -112,13 +116,13 @@ export default function Dashboard() {
           const yesterdayStr = yesterday.toISOString().split('T')[0]
           
           // Check if user reflected today or yesterday
-          const hasToday = userReflections.some(r => r.date === today)
-          const hasYesterday = userReflections.some(r => r.date === yesterdayStr)
+          const hasToday = userReflections.some((r: any) => r.date === today)
+          const hasYesterday = userReflections.some((r: any) => r.date === yesterdayStr)
           
           if (hasToday || hasYesterday) {
             currentStreak = 1
             // Count consecutive days with reflections
-            const sortedReflections = [...userReflections].sort((a, b) => 
+            const sortedReflections = [...userReflections].sort((a: any, b: any) => 
               new Date(b.date).getTime() - new Date(a.date).getTime()
             )
             
@@ -138,19 +142,21 @@ export default function Dashboard() {
         }
 
         // Fetch user's pomodoro history
-        const { data: pomodoro } = await supabase
-          .from('pomodoro_history')
+        const { data: rawPomodoro } = await (supabase
+          .from('pomodoro_history') as any)
           .select('*')
           .eq('user_id', user.id)
           .order('start_time', { ascending: false })
           .limit(10)
 
-        // Count active goals (focus sessions not marked as completed)
-        const activeGoals = sessions?.filter(session => !session.completed).length || 0
+        const pomodoro: any[] = (rawPomodoro || []) as any[]
 
-        setFocusSessions(sessions || [])
-        setReflections(userReflections || [])
-        setPomodoroHistory(pomodoro || [])
+        // Count active goals (focus sessions not marked as completed)
+        const activeGoals = sessions.filter((session: any) => !session.completed).length || 0
+
+        setFocusSessions(sessions)
+        setReflections(userReflections)
+        setPomodoroHistory(pomodoro)
         setStats({
           currentStreak,
           weeklyHours: parseFloat(weeklyHours.toFixed(1)),

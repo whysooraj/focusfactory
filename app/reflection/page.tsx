@@ -239,10 +239,9 @@ ${totalFocusTime >= 60 ? '- Reached 1+ hour of focused work' : ''}
           {showSummary && summary && (
             <div className="space-y-6">
               <Card className="bg-white/5 border-white/10 backdrop-blur-sm p-6 md:p-8">
-                <div className="prose prose-invert max-w-none text-white/80">
+                <div className="prose prose-invert max-w-none text-white/80 whitespace-pre-wrap leading-relaxed">
                   <ReactMarkdown 
                     remarkPlugins={[remarkGfm]}
-                    className="whitespace-pre-wrap leading-relaxed"
                     components={{
                       // Add custom styling for markdown elements if needed
                       h1: ({node, ...props}) => <h1 className="text-2xl font-bold mb-4" {...props} />,

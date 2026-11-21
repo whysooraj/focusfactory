@@ -6,8 +6,8 @@ export async function insertRecord<T extends TableName>(
   data: TableInsert<T>,
   select = '*',
 ) {
-  const { data: result, error } = await supabase
-    .from(table)
+  const { data: result, error } = await (supabase
+    .from(table as any) as any)
     .insert(data as any)
     .select(select)
     .single()
@@ -22,8 +22,8 @@ export async function updateRecord<T extends TableName>(
   updates: TableUpdate<T>,
   select = '*',
 ) {
-  const { data: result, error } = await supabase
-    .from(table)
+  const { data: result, error } = await (supabase
+    .from(table as any) as any)
     .update(updates as any)
     .eq('id', id)
     .select(select)
@@ -34,7 +34,7 @@ export async function updateRecord<T extends TableName>(
 }
 
 export async function deleteRecord<T extends TableName>(table: T, id: string) {
-  const { error } = await supabase.from(table).delete().eq('id', id)
+  const { error } = await (supabase.from(table as any) as any).delete().eq('id', id)
   if (error) throw error
   return { success: true }
 }
@@ -45,10 +45,10 @@ export async function createFocusSession(sessionData: TableInsert<'focus_session
 }
 
 export async function getRecentFocusSessions(limit = 10) {
-  const { data, error } = await supabase
-    .from('focus_sessions')
+  const { data, error } = await (supabase
+    .from('focus_sessions' as any) as any)
     .select('*')
-    .order('started_at', { ascending: false })
+    .order('created_at', { ascending: false })
     .limit(limit)
 
   if (error) throw error
@@ -60,14 +60,14 @@ export async function createReflection(reflectionData: TableInsert<'reflections'
   return insertRecord('reflections', reflectionData)
 }
 
-export async function getTodaysReflection() {
-  const today = new Date().toISOString().split('T')[0]
-  const { data } = await supabase
-    .from('reflections')
+export async function getRecentReflections(limit = 7) {
+  const { data, error } = await (supabase
+    .from('reflections' as any) as any)
     .select('*')
-    .eq('reflection_date', today)
-    .single()
+    .order('reflection_date', { ascending: false })
+    .limit(limit)
 
+  if (error) throw error
   return data
 }
 
@@ -77,7 +77,7 @@ export async function createPomodoroSession(pomodoroData: TableInsert<'pomodoro_
 }
 
 export async function getWeeklyFocusTime(weeks = 4) {
-  const { data, error } = await supabase.rpc('get_weekly_focus_time', {
+  const { data, error } = await (supabase.rpc as any)('get_weekly_focus_time', {
     weeks_param: weeks,
   })
 

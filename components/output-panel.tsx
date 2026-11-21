@@ -107,7 +107,7 @@ const MarkdownContent = ({ content }: { content: string }) => {
               {...props} 
             />
           ),
-          code: ({ node, inline, ...props }) => {
+          code: ({ node, inline, ...props }: any) => {
             if (inline) {
               return <code className="bg-gray-700 text-pink-300 px-1.5 py-0.5 rounded text-sm" {...props} />
             }

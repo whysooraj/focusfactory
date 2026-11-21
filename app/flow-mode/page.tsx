@@ -62,7 +62,7 @@ export default function FlowMode() {
                     <select
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
-                      className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-white/40"
+                      className="w-full bg-white/10 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-white/40 [&>option]:bg-zinc-900 [&>option]:text-white"
                     >
                       <option value="15">15 minutes</option>
                       <option value="30">30 minutes</option>

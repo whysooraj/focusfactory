@@ -50,7 +50,7 @@ export async function POST(req: Request) {
     }`
     
     // Using the latest Gemini 2.5 Flash model
-    const apiKey = 'AIzaSyBFTTIWrSm4CMy1YjmRlDv82YutJPYuftI';
+    const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_KEY || 'AIzaSyBFTTIWrSm4CMy1YjmRlDv82YutJPYuftI';
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
     
     console.log('Sending request to Gemini API...');

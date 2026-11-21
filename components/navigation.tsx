@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, Sun, RotateCcw, Github } from "lucide-react"
+import { Menu, X, Sun, RotateCcw, Github } from "lucide-react"
 import { useState } from "react"
 import { UserButton, SignedIn, SignedOut } from "@clerk/nextjs"
 
@@ -21,30 +21,24 @@ export function Navigation() {
   ]
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 pt-4 px-6">
+    <nav className="fixed top-0 left-0 right-0 z-50 pt-3 px-4 sm:px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-6">
+        {/* Main Bar */}
+        <div className="flex items-center justify-between bg-black/40 backdrop-blur-md border border-white/10 rounded-2xl px-4 py-2.5 sm:px-6">
+          {/* Left Brand / Quick Controls */}
           <div className="flex items-center gap-3">
-            <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-              <Sun className="w-5 h-5" />
-            </button>
-            <button className="p-2 hover:bg-white/10 rounded-lg transition-colors">
-              <RotateCcw className="w-5 h-5" />
-            </button>
+            <Link href="/" className="font-bold text-white text-base tracking-tight hover:opacity-80 transition-opacity">
+              Focus Factory
+            </Link>
           </div>
-          <button className="md:hidden p-2 hover:bg-white/10 rounded-lg transition-colors">
-            <Menu className="w-5 h-5" />
-          </button>
-        </div>
 
-        {/* Centered navigation bar */}
-        <div className="flex justify-center mb-8">
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full px-2 py-2 flex items-center gap-2">
+          {/* Centered navigation bar for desktop */}
+          <div className="hidden md:flex items-center gap-1 bg-white/10 border border-white/10 rounded-full px-2 py-1">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-4 py-1.5 rounded-full text-xs lg:text-sm font-medium transition-all ${
                   isActive(item.href) ? "bg-white text-black" : "text-white/70 hover:text-white"
                 }`}
               >
@@ -52,41 +46,89 @@ export function Navigation() {
               </Link>
             ))}
           </div>
+
+          {/* Right side buttons */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <SignedOut>
+              <Link href="/login" className="hidden sm:inline-flex">
+                <button className="px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-xs sm:text-sm text-white hover:bg-white/20 transition-colors">
+                  Sign In
+                </button>
+              </Link>
+              <Link href="/sign-up" className="hidden sm:inline-flex">
+                <button className="px-3 py-1.5 bg-white text-black rounded-lg text-xs sm:text-sm font-semibold hover:opacity-90 transition-opacity">
+                  Sign Up
+                </button>
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: "w-8 h-8"
+                  }
+                }}
+              />
+            </SignedIn>
+            <a 
+              href="https://github.com/whysooraj/focusfactory" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="p-2 hover:bg-white/10 rounded-lg transition-colors inline-flex items-center text-white/80 hover:text-white"
+              aria-label="GitHub Repository"
+            >
+              <Github className="w-4 h-4 sm:w-5 sm:h-5" />
+            </a>
+
+            {/* Mobile menu trigger */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-2 hover:bg-white/10 rounded-lg transition-colors text-white"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            >
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
-        {/* Right side buttons */}
-        <div className="flex justify-end gap-3">
-          <SignedOut>
-            <Link href="/login">
-              <button className="px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-colors">
-                Sign In
-              </button>
-            </Link>
-            <Link href="/sign-up">
-              <button className="px-4 py-2 bg-white text-black rounded-lg hover:opacity-90 transition-opacity">
-                Sign Up
-              </button>
-            </Link>
-          </SignedOut>
-          <SignedIn>
-            <UserButton 
-              appearance={{
-                elements: {
-                  avatarBox: "w-8 h-8"
-                }
-              }}
-            />
-          </SignedIn>
-          <a 
-            href="https://github.com/sai21-learn/focusfactory" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="p-2 hover:bg-white/10 rounded-lg transition-colors inline-flex items-center"
-            aria-label="GitHub Repository"
-          >
-            <Github className="w-5 h-5" />
-          </a>
-        </div>
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden mt-2 bg-black/95 backdrop-blur-xl border border-white/20 rounded-2xl p-4 shadow-2xl flex flex-col gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`px-4 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  isActive(item.href)
+                    ? "bg-white text-black"
+                    : "text-white/80 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+
+            <div className="pt-2 mt-2 border-t border-white/10 flex flex-col gap-2">
+              <SignedOut>
+                <Link
+                  href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-sm text-white"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/sign-up"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center px-4 py-2 bg-white text-black font-semibold rounded-lg text-sm"
+                >
+                  Sign Up
+                </Link>
+              </SignedOut>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   )

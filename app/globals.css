@@ -126,6 +126,11 @@
   }
 }
 
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 /* Geometric gradient background with diagonal planes */
 body {
   background-image: url("/images/geometric-bg.png");
@@ -135,6 +140,7 @@ body {
   background-repeat: no-repeat;
   position: relative;
   overflow-x: hidden;
+  max-width: 100vw;
 }
 
 body::before {

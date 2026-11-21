@@ -14,8 +14,8 @@ export async function GET() {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
-    const { data: sessions, error } = await supabase
-      .from('focus_sessions')
+    const { data: sessions, error } = await (supabase
+      .from('focus_sessions') as any)
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
@@ -44,8 +44,8 @@ export async function POST(request: NextRequest) {
     const cookieStore = await cookies()
     const supabase = createClient(cookieStore)
 
-    const { data, error } = await supabase
-      .from('focus_sessions')
+    const { data, error } = await (supabase
+      .from('focus_sessions') as any)
       .insert({
         user_id: userId,
         time,
